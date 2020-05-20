@@ -1,6 +1,10 @@
+require('dotenv').config();
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const morgan = require('morgan');
 const requireDir = require('require-dir');
 
 const path= require('path');
@@ -20,7 +24,13 @@ const host = 'localhost';
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+app.use(morgan('dev'));
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use("/files",
+ express.static(path.resolve(__dirname, 'tmp', 'uploads'))
+ );
 
 
 
@@ -36,8 +46,8 @@ app.listen(port, host, () => {
 
 
 mongoose.Promise=global.Promise;
-const dbUrl ='mongodb+srv://kipface:lKRh9MZs2WYQC84d@cluster0-cfvkm.azure.mongodb.net/restapi?retryWrites=true&w=majority'
-mongoose.connect(dbUrl, {useCreateIndex:true, useNewUrlParser: true})
+//const dbUrl =
+mongoose.connect(process.env.ATLAS_URL, {useCreateIndex:true, useNewUrlParser: true})
 .then(mongoose => console.log('Conectado'))
 .catch(err => console.log(err));
 
